@@ -1,0 +1,17 @@
+server:
+  port: 8080
+  servlet:
+    context
+spring:
+  application:
+    name: proactive
+  datasource:
+    url: jdbc:postgresql://localhost:5432/proactive
+    username: postgres
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      show-sql: true
+      format_sql: true
+      dialect: org.hibernate.dialect.PostgreSQLDialect
