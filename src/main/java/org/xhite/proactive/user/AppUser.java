@@ -1,6 +1,10 @@
 package org.xhite.proactive.user;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.xhite.proactive.project.Project;
 import org.xhite.proactive.project.task.Task;
 import org.xhite.proactive.user.role.Role;
@@ -11,6 +15,10 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +32,15 @@ public class AppUser {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles = new HashSet<>();
+    @Builder.Default
+    private final Set<Role> roles = new HashSet<>();
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Project> projects = new ArrayList<>();
+    @Builder.Default
+    private final List<Project> projects = new ArrayList<>();
+    @Builder.Default
     @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Task> tasks = new ArrayList<>();
+    private final List<Task> tasks = new ArrayList<>();
+    @Builder.Default
     @ManyToMany(mappedBy = "projectMembers")
-    private List<Project> memberOfProjects = new ArrayList<>();
+    private final List<Project> memberOfProjects = new ArrayList<>();
 }

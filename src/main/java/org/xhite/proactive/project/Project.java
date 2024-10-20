@@ -1,6 +1,10 @@
 package org.xhite.proactive.project;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.xhite.proactive.project.task.Task;
 import org.xhite.proactive.user.AppUser;
 
@@ -8,6 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +23,8 @@ public class Project {
     private String projectName;
     private String projectDescription;
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Task> projectTasks = new ArrayList<>();
+    @Builder.Default
+    private final List<Task> projectTasks = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "created_by_user_id")
     private AppUser createdBy;
@@ -25,5 +34,6 @@ public class Project {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "member_id")
     )
-    private List<AppUser> projectMembers = new ArrayList<>();
+    @Builder.Default
+    private final List<AppUser> projectMembers = new ArrayList<>();
 }
