@@ -25,7 +25,9 @@ public class SecurityConfig {
                         .requestMatchers("/projects/**", "/tasks/**").hasAuthority("ROLE_PROJECT_MANAGER")
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated())
-                .formLogin(form -> form.loginPage("/login").permitAll())
+                .formLogin(form -> form.loginPage("/login")
+                        .permitAll()
+                        .defaultSuccessUrl("/", true))
                 .logout(LogoutConfigurer::permitAll)
                 .userDetailsService(userDetailsService);
 

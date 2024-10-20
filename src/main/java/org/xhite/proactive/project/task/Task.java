@@ -20,7 +20,9 @@ public class Task {
     private Long id;
     private String taskName;
     private String taskDescription;
+    @Enumerated(EnumType.STRING)
     private TaskStatus status;
+    @Enumerated(EnumType.STRING)
     private TaskPriority priority;
     @ManyToOne
     @JoinColumn(name = "project_id")

@@ -25,6 +25,8 @@ public class AppUser {
     private Long id;
     private String username;
     private String password;
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
