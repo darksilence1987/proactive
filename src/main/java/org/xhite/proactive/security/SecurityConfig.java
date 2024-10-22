@@ -22,12 +22,12 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorization) -> authorization
                         .requestMatchers("/tasks/**").hasAuthority("ROLE_USER")
-                        .requestMatchers("/projects/**", "/tasks/**").hasAuthority("ROLE_PROJECT_MANAGER")
+                        .requestMatchers("/tasks/**").hasAuthority("ROLE_PROJECT_MANAGER")
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(form -> form.loginPage("/login")
                         .permitAll()
-                        .defaultSuccessUrl("/", true))
+                        .defaultSuccessUrl("/projects", true))
                 .logout(LogoutConfigurer::permitAll)
                 .userDetailsService(userDetailsService);
 

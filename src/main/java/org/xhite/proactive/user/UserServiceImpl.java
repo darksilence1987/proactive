@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,5 +22,10 @@ public class UserServiceImpl implements UserService{
         AppUser user = userRepository.findById(id).orElse(null);
         if(user != null && user.getStatus() != UserStatus.ACTIVE) user = null;
         return user;
+    }
+
+    @Override
+    public AppUser getUserByUsername(String name) {
+        return userRepository.findByUsername(name).orElse(null);
     }
 }
