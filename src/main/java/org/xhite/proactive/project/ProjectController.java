@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.xhite.proactive.project.task.Task;
 import org.xhite.proactive.project.task.TaskService;
 import org.xhite.proactive.user.AppUser;
-
-import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

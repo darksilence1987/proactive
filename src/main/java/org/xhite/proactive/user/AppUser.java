@@ -25,6 +25,7 @@ public class AppUser {
     private Long id;
     private String username;
     private String password;
+    private String email;
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
@@ -35,7 +36,7 @@ public class AppUser {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     @Builder.Default
-    private final Set<Role> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private final List<Project> projects = new ArrayList<>();

@@ -8,4 +8,6 @@ public interface TaskService {
     List<Task> getTasksByUser(String name);
 
     List<Task> getTasksByProject(Project project);
+
+    Task getTaskById(Long id);
 }

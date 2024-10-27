@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${task.taskName}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <h1 class="mt-4" th:text="${task.taskName}"></h1>
+    <p th:text="${task.taskDescription}"></p>
+    <p><b>Durum:</b> <span th:text="${task.status}"></span></p>
+    <p><b>Öncelik:</b> <span th:text="${task.priority}"></span></p>
+    <p><b>Proje:</b> <span th:text="${task.project.projectName}"></span></p>
+    <p><b>Atanan Kullanıcı:</b> <span th:text="${task.assignedTo.username}"></span></p>
+
+
+    <div>
+        <span sec:authorize="hasRole('PROJECT_MANAGER')">
+            <a th:href="@{/tasks/{id}/edit(id=${task.id})}" class="btn btn-secondary">Görevi Düzenle</a>
+        </span>
+        <span sec:authorize="hasRole('PROJECT_MANAGER') or #authentication.principal.username == task.assignedTo.username">
+            <a th:href="@{/tasks/{id}/complete(id=${task.id})}" class="btn btn-primary">Görevi Tamamla</a>
+        </span>
+    </div>
+
+    <h2 class="mt-4">Yorumlar</h2>
+    <div th:each="comment : ${comments}">
+        <p th:text="${comment.text}"></p>
+        <p><b>Yorumlayan:</b> <span th:text="${comment.user.username}"></span></p>
+    </div>
+
+    <div sec:authorize="hasRole('PROJECT_MANAGER') or #authentication.principal.username == task.assignedTo.username">
+        <h3>Yorum Ekle</h3>
+        <form th:action="@{/tasks/{id}/comments(id=${task.id})}" method="post">
+            <textarea class="form-control" name="text" rows="3"></textarea>
+            <button type="submit" class="btn btn-primary mt-2">Gönder</button>
+        </form>
+    </div>
+
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>

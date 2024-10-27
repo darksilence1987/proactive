@@ -2,12 +2,10 @@ package org.xhite.proactive.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.xhite.proactive.project.Project;
 import org.xhite.proactive.project.ProjectRepository;
-import org.xhite.proactive.project.ProjectService;
 import org.xhite.proactive.project.task.Task;
 import org.xhite.proactive.project.task.TaskPriority;
 import org.xhite.proactive.project.task.TaskRepository;
@@ -30,7 +28,6 @@ public class DataInitializer {
     private final PasswordEncoder passwordEncoder;
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
-    private final ProjectService projectService;
 
 
     @PostConstruct
@@ -46,10 +43,10 @@ public class DataInitializer {
 
     private void initializeRoles(){
         Arrays.stream(RoleName.values())
-                .filter(roleName -> !roleRepository.existsByName(roleName))
+                .filter(roleName -> !roleRepository.existsByRoleName(roleName))
                 .forEach(roleName -> {
                     Role role = new Role();
-                    role.setName(roleName);
+                    role.setRoleName(roleName);
                     role.setDescription(roleName.name().replace("ROLE_", "").toLowerCase());
                     roleRepository.save(role);
 
@@ -60,15 +57,16 @@ public class DataInitializer {
     private void initalizeTestUser(){
         AppUser user = new AppUser();
         user.setUsername("xhite");
+        user.setEmail("kaankara@gmail.com");
         user.setPassword(passwordEncoder.encode("1234"));
         user.setStatus(UserStatus.ACTIVE);
-        Role role = roleRepository.findByName(RoleName.ROLE_USER)
+        Role role = roleRepository.findByRoleName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
         user.getRoles().add(role);
-        role = roleRepository.findByName(RoleName.ROLE_PROJECT_MANAGER)
+        role = roleRepository.findByRoleName(RoleName.ROLE_PROJECT_MANAGER)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
         user.getRoles().add(role);
-        role = roleRepository.findByName(RoleName.ROLE_ADMIN)
+        role = roleRepository.findByRoleName(RoleName.ROLE_ADMIN)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
         user.getRoles().add(role);
         userRepository.save(user);
@@ -77,9 +75,10 @@ public class DataInitializer {
     private void initializeAppUser(){
         AppUser user = new AppUser();
         user.setUsername("user");
+        user.setEmail("user@gmail.com");
         user.setPassword(passwordEncoder.encode("1234"));
         user.setStatus(UserStatus.ACTIVE);
-        Role role = roleRepository.findByName(RoleName.ROLE_USER)
+        Role role = roleRepository.findByRoleName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
         user.getRoles().add(role);
         userRepository.save(user);
@@ -88,9 +87,10 @@ public class DataInitializer {
     private void initializeProjectManager(){
         AppUser user = new AppUser();
         user.setUsername("pm");
+        user.setEmail("manager@gmail.com");
         user.setPassword(passwordEncoder.encode("1234"));
         user.setStatus(UserStatus.ACTIVE);
-        Role role = roleRepository.findByName(RoleName.ROLE_PROJECT_MANAGER)
+        Role role = roleRepository.findByRoleName(RoleName.ROLE_PROJECT_MANAGER)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
         user.getRoles().add(role);
         userRepository.save(user);
@@ -99,9 +99,10 @@ public class DataInitializer {
     private void initializeAdmin(){
         AppUser user = new AppUser();
         user.setUsername("admin");
+        user.setEmail("admin@gmail.com");
         user.setPassword(passwordEncoder.encode("1234"));
         user.setStatus(UserStatus.ACTIVE);
-        Role role = roleRepository.findByName(RoleName.ROLE_ADMIN)
+        Role role = roleRepository.findByRoleName(RoleName.ROLE_ADMIN)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
         user.getRoles().add(role);
         userRepository.save(user);
@@ -149,7 +150,6 @@ public class DataInitializer {
                 .assignedTo(user)
                 .build();
 
-        // Projeleri ve görevleri kaydedin
         projectRepository.saveAll(List.of(project1, project2));
         taskRepository.saveAll(List.of(task1, task2));
     }
