@@ -31,7 +31,7 @@
             <td th:text="${task.status}"></td>
             <td th:text="${task.priority}"></td>
             <td>
-                <a th:href="@{/tasks/{id}(id=${task.id})}" class="btn btn-primary btn-sm">Detaylar</a>
+                <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${task.project.id}, taskId=${task.id})}" class="btn btn-primary btn-sm">Detaylar</a>
             </td>
         </tr>
         </tbody>

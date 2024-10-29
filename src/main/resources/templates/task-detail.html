@@ -1,53 +1,146 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${task.taskName}"></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Görev Detayı</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+<div th:replace="~{fragments/header:: header}"></div>
 
-<div th:replace="~{fragments/header :: header}"></div>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 th:text="${task.taskName}"></h3>
+            <button class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editTaskModal"
+                    sec:authorize="hasRole('ROLE_PROJECT_MANAGER')"
+                    th:if="${task.project.createdBy.username == #authentication.principal.username}">
+                Düzenle
+            </button>
+        </div>
+        <div class="card-body">
+            <p th:text="${task.taskDescription}"></p>
+            <div class="row">
+                <div class="col-md-4">
+                    <strong>Durum:</strong>
+                    <span th:text="${task.status}"></span>
+                </div>
+                <div class="col-md-4">
+                    <strong>Öncelik:</strong>
+                    <span th:text="${task.priority}"></span>
+                </div>
+                <div class="col-md-4">
+                    <strong>Atanan Kişi:</strong>
+                    <span th:text="${task.assignedTo?.username}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="container">
-    <h1 class="mt-4" th:text="${task.taskName}"></h1>
-    <p th:text="${task.taskDescription}"></p>
-    <p><b>Durum:</b> <span th:text="${task.status}"></span></p>
-    <p><b>Öncelik:</b> <span th:text="${task.priority}"></span></p>
-    <p><b>Proje:</b> <span th:text="${task.project.projectName}"></span></p>
-    <p><b>Atanan Kullanıcı:</b> <span th:text="${task.assignedTo.username}"></span></p>
-
-
-    <div>
-        <span sec:authorize="hasRole('PROJECT_MANAGER')">
-            <a th:href="@{/tasks/{id}/edit(id=${task.id})}" class="btn btn-secondary">Görevi Düzenle</a>
-        </span>
-        <span sec:authorize="hasRole('PROJECT_MANAGER') or #authentication.principal.username == task.assignedTo.username">
-            <form th:action="@{/projects/{projectId}/tasks/{taskId}/complete(projectId=${task.project.id},taskId=${task.id})}" method="post" style="display: inline;">
+    <!-- Comments -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>Yorumlar</h4>
+        </div>
+        <div class="card-body">
+            <!-- Comment Form -->
+            <form th:action="@{/projects/{projectId}/tasks/{taskId}/comments(projectId=${projectId},taskId=${task.id})}"
+                  method="post"
+                  th:object="${newComment}">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <button type="submit" class="btn btn-success">Görevi Tamamla</button>
+                <div class="mb-3">
+                <textarea class="form-control"
+                          th:field="*{content}"
+                          rows="3"
+                          placeholder="Yorumunuzu yazın..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Yorum Ekle</button>
             </form>
-        </span>
+
+            <!-- Comments List -->
+            <div class="mt-4">
+                <div th:each="comment : ${comments}" class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="card-subtitle mb-2 text-muted"
+                                th:text="${comment.createdBy.username}"></h6>
+                            <small th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}"></small>
+                        </div>
+                        <p class="card-text" th:text="${comment.content}"></p>
+                        <!-- Delete Comment Button -->
+                        <form th:if="${comment.createdBy.username == #authentication.principal.username}"
+                              th:action="@{/projects/{projectId}/tasks/{taskId}/comments/{commentId}/delete(projectId=${projectId},taskId=${task.id},commentId=${comment.id})}"
+                              method="post"
+                              style="display: inline;">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <h2 class="mt-4">Yorumlar</h2>
-    <div th:each="comment : ${comments}">
-        <p th:text="${comment.text}"></p>
-        <p><b>Yorumlayan:</b> <span th:text="${comment.user.username}"></span></p>
-    </div>
 
-    <div sec:authorize="hasRole('PROJECT_MANAGER') or #authentication.principal.username == task.assignedTo.username">
-        <h3>Yorum Ekle</h3>
-        <form th:action="@{/tasks/{id}/comments(id=${task.id})}" method="post">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <textarea class="form-control" name="text" rows="3"></textarea>
-            <button type="submit" class="btn btn-primary mt-2">Gönder</button>
-        </form>
-    </div>
+    <!-- Edit Task Modal -->
+    <div class="modal fade" id="editTaskModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Görevi Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/projects/{projectId}/tasks/{taskId}/update(projectId=${projectId},taskId=${task.id})}"
+                          method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
+                        <div class="mb-3">
+                            <label for="taskName" class="form-label">Görev Adı</label>
+                            <input type="text" class="form-control" id="taskName"
+                                   name="taskName" th:value="${task.taskName}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="taskDescription" class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="taskDescription"
+                                      name="taskDescription" rows="3"
+                                      th:text="${task.taskDescription}"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">Öncelik</label>
+                            <select class="form-select" id="priority" name="priority" required>
+                                <option th:each="priorityOption : ${T(org.xhite.proactive.project.task.TaskPriority).values()}"
+                                        th:value="${priorityOption}"
+                                        th:text="${priorityOption}"
+                                        th:selected="${priorityOption == task.priority}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Durum</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option th:each="statusOption : ${T(org.xhite.proactive.project.task.TaskStatus).values()}"
+                                        th:value="${statusOption}"
+                                        th:text="${statusOption}"
+                                        th:selected="${statusOption == task.status}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -5,6 +5,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.xhite.proactive.project.Project;
 import org.xhite.proactive.project.ProjectService;
+import org.xhite.proactive.project.task.dto.TaskCreateDTO;
+import org.xhite.proactive.project.task.dto.TaskUpdateDTO;
 import org.xhite.proactive.user.AppUser;
 import org.xhite.proactive.user.UserService;
 
@@ -64,6 +66,26 @@ public class TaskServiceImpl implements TaskService{
                 .status(TaskStatus.TODO)
                 .project(project)
                 .build();
+
+        taskRepository.save(task);
+    }
+
+    @Override
+    public void updateTask(Long projectId, Long taskId, TaskUpdateDTO dto, String username) {
+        Project project = projectService.getProjectById(projectId);
+        if (!project.getCreatedBy().getUsername().equals(username)) {
+            throw new AccessDeniedException("Only project manager can update tasks");
+        }
+
+        Task task = getTaskById(taskId);
+        if (task == null || !task.getProject().getId().equals(projectId)) {
+            throw new RuntimeException("Task not found");
+        }
+
+        task.setTaskName(dto.getTaskName());
+        task.setTaskDescription(dto.getTaskDescription());
+        task.setPriority(dto.getPriority());
+        task.setStatus(dto.getStatus());
 
         taskRepository.save(task);
     }

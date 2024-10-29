@@ -1,8 +1,9 @@
-package org.xhite.proactive.project.task;
+package org.xhite.proactive.project.task.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.xhite.proactive.project.task.TaskPriority;
 
 @Data
 public class TaskCreateDTO {

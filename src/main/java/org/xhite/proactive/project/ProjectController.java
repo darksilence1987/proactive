@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.xhite.proactive.project.task.Task;
-import org.xhite.proactive.project.task.TaskCreateDTO;
+import org.xhite.proactive.project.task.dto.TaskCreateDTO;
 import org.xhite.proactive.project.task.TaskService;
 import org.xhite.proactive.user.AppUser;
 import java.util.HashSet;
