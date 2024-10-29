@@ -9,10 +9,12 @@ import java.util.List;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
-    @Query("SELECT p FROM Project p JOIN p.projectMembers m WHERE m.id = :memberId")
-    List<Project> findProjectsByMemberId(Long memberId);
+    @Query("SELECT p FROM Project p JOIN p.projectMembers m WHERE m.id = :memberId AND p.status = :status")
+    List<Project> findProjectsByMemberIdAndStatus(Long memberId, ProjectStatus status);
 
-    List<Project> findProjectsByCreatedBy(AppUser createdBy);
+    List<Project> findProjectsByCreatedByAndStatus(AppUser createdBy, ProjectStatus status);
 
-    Project findProjectById(Long id);
+    Project findProjectByIdAndStatus(Long id, ProjectStatus status);
+
+    List<Project> findAllByStatusIs(ProjectStatus status);
 }

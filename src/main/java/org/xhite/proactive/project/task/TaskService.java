@@ -7,9 +7,9 @@ import org.xhite.proactive.project.task.dto.TaskUpdateDTO;
 import java.util.List;
 
 public interface TaskService {
-    List<Task> getTasksByUser(String name);
+    List<Task> getActiveTasksByUser(String name);
 
-    List<Task> getTasksByProject(Project project);
+    List<Task> getActiveTasksByProject(Project project);
 
     Task getTaskById(Long id);
 
@@ -20,4 +20,8 @@ public interface TaskService {
     void completeTask(Long projectId, Long taskId, String username);
 
     void updateTask(Long projectId, Long taskId, TaskUpdateDTO taskUpdateDTO, String username);
+
+    List<Task> getCompletedTasksByUser(String username);
+
+    List<Task> getCompletedTasksByProject(Project project);
 }

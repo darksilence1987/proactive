@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.xhite.proactive.project.Project;
 import org.xhite.proactive.user.AppUser;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -30,4 +32,11 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private AppUser assignedTo;
+    private LocalDateTime createdAt;
+    private LocalDateTime completedAt;
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
 }

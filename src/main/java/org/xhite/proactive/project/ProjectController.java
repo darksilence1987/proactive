@@ -46,11 +46,13 @@ public class ProjectController {
     @GetMapping("/projects/{id}")
     public String projectDetail(@PathVariable Long id, Model model) {
         Project project = projectService.getProjectById(id);
-        List<Task> tasks = taskService.getTasksByProject(project);
+        List<Task> activeTasks = taskService.getActiveTasksByProject(project);
+        List<Task> completedTasks = taskService.getCompletedTasksByProject(project);
         List<AppUser> members = project.getProjectMembers();
 
         model.addAttribute("project", project);
-        model.addAttribute("tasks", tasks);
+        model.addAttribute("activeTasks", activeTasks);
+        model.addAttribute("completedTasks", completedTasks);
         model.addAttribute("members", members);
         return "project-detail";
     }
@@ -66,6 +68,14 @@ public class ProjectController {
     public String createProject(@ModelAttribute ProjectCreateDTO projectCreateDTO,
                                 @AuthenticationPrincipal UserDetails principal) {
         projectService.createProject(projectCreateDTO, principal.getUsername());
+        return "redirect:/projects";
+    }
+
+    @PreAuthorize("hasRole('ROLE_PROJECT_MANAGER')")
+    @PostMapping("/projects/{id}/delete")
+    public String deleteProject(@PathVariable Long id,
+                                @AuthenticationPrincipal UserDetails principal) {
+        projectService.deleteProject(id, principal.getUsername());
         return "redirect:/projects";
     }
 

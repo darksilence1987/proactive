@@ -22,12 +22,19 @@ public class Project {
     private Long id;
     private String projectName;
     private String projectDescription;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private ProjectStatus status = ProjectStatus.ACTIVE;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private final List<Task> projectTasks = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "created_by_user_id")
     private AppUser createdBy;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_members",

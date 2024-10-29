@@ -25,8 +25,10 @@ public class TaskController {
 
     @GetMapping("/my-tasks")
     public String getMyTasksPage(Model model, @AuthenticationPrincipal UserDetails principal) {
-        var tasks = taskService.getTasksByUser(principal.getUsername());
-        model.addAttribute("tasks", tasks);
+        var activeTasks = taskService.getActiveTasksByUser(principal.getUsername());
+        var completedTasks = taskService.getCompletedTasksByUser(principal.getUsername());
+        model.addAttribute("activeTasks", activeTasks);
+        model.addAttribute("completedTasks", completedTasks);
         return "tasks";
 
     }

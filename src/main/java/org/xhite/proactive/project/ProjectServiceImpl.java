@@ -2,8 +2,9 @@ package org.xhite.proactive.project;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.xhite.proactive.project.task.TaskRepository;
+import org.xhite.proactive.project.task.TaskStatus;
 import org.xhite.proactive.user.AppUser;
 import org.xhite.proactive.user.UserService;
 
@@ -17,6 +18,7 @@ public class ProjectServiceImpl implements ProjectService{
 
     private final ProjectRepository projectRepository;
     private final UserService userService;
+    private final TaskRepository taskRepository;
 
 
     @Override
@@ -25,28 +27,28 @@ public class ProjectServiceImpl implements ProjectService{
         if(user == null) return new ArrayList<>();
         Long userId = user.getId();
 
-        return projectRepository.findProjectsByMemberId(userId);
+        return projectRepository.findProjectsByMemberIdAndStatus(userId, ProjectStatus.ACTIVE);
     }
 
     @Override
     public List<Project> getProjectsOwnedByUser(String name) {
         AppUser user = userService.getUserByUsername(name);
         if(user == null) return new ArrayList<>();
-        return projectRepository.findProjectsByCreatedBy(user);
+        return projectRepository.findProjectsByCreatedByAndStatus(user, ProjectStatus.ACTIVE);
     }
 
     @Override
     public Project getProjectById(Long id) {
-        return projectRepository.findProjectById(id);
+        return projectRepository.findProjectByIdAndStatus(id, ProjectStatus.ACTIVE);
     }
 
     @Override
     public List<Project> getAllProjects() {
-        return projectRepository.findAll();
+        return projectRepository.findAllByStatusIs(ProjectStatus.ACTIVE);
     }
 
     @Override
-    public Project createProject(ProjectCreateDTO projectCreateDTO, String username) {
+    public void createProject(ProjectCreateDTO projectCreateDTO, String username) {
         AppUser owner = userService.getUserByUsername(username);
 
         Project project = new Project();
@@ -55,8 +57,25 @@ public class ProjectServiceImpl implements ProjectService{
         project.setCreatedBy(owner);
         project.getProjectMembers().add(owner);
 
-        return projectRepository.save(project);
+        projectRepository.save(project);
     }
+
+    public void deleteProject(Long projectId, String username) {
+        Project project = getProjectById(projectId);
+        if (!project.getCreatedBy().getUsername().equals(username)) {
+            throw new AccessDeniedException("Only project owner can delete project");
+        }
+
+        project.setStatus(ProjectStatus.DELETED);
+        projectRepository.save(project);
+
+        // Set all tasks to deleted
+        project.getProjectTasks().forEach(task -> {
+            task.setStatus(TaskStatus.DELETED);
+            taskRepository.save(task);
+        });
+    }
+
 
     public void addMemberToProject(Long projectId, String username, String ownerUsername) {
         Project project = getProjectById(projectId);

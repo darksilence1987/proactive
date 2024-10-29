@@ -10,6 +10,7 @@ import org.xhite.proactive.project.task.dto.TaskUpdateDTO;
 import org.xhite.proactive.user.AppUser;
 import org.xhite.proactive.user.UserService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,15 +20,23 @@ public class TaskServiceImpl implements TaskService{
     private final UserService userService;
     private final ProjectService projectService;
 
-    @Override
-    public List<Task> getTasksByUser(String name) {
+    public List<Task> getActiveTasksByUser(String name) {
         AppUser user = userService.getUserByUsername(name);
-        return taskRepository.findAllByAssignedTo(user);
+        return taskRepository.findActiveTasksByUser(user);
+    }
+
+    public List<Task> getCompletedTasksByUser(String username) {
+        AppUser user = userService.getUserByUsername(username);
+        return taskRepository.findCompletedTasksByUser(user);
     }
 
     @Override
-    public List<Task> getTasksByProject(Project project) {
-        return taskRepository.getTasksByProject(project);
+    public List<Task> getActiveTasksByProject(Project project) {
+        return taskRepository.findActiveTasksByProject(project);
+    }
+
+    public List<Task> getCompletedTasksByProject(Project project) {
+        return taskRepository.findCompletedTasksByProject(project);
     }
 
     @Override
@@ -101,6 +110,7 @@ public class TaskServiceImpl implements TaskService{
         }
 
         task.setStatus(TaskStatus.DONE);
+        task.setCompletedAt(LocalDateTime.now());
         taskRepository.save(task);
     }
 }

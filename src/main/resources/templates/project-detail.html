@@ -27,39 +27,117 @@
             </div>
         </div>
         <div class="card-body">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Görev</th>
-                    <th>Açıklama</th>
-                    <th>Durum</th>
-                    <th>Öncelik</th>
-                    <th>Atanan Kişi</th>
-                    <th>İşlemler</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="task : ${tasks}">
-                    <td th:text="${task.taskName}"></td>
-                    <td th:text="${task.taskDescription}"></td>
-                    <td th:text="${task.status}"></td>
-                    <td th:text="${task.priority}"></td>
-                    <td th:text="${task.assignedTo?.username}"></td>
-                    <td>
-                        <div th:if="${project.createdBy.username == #authentication.principal.username}"
-                             sec:authorize="hasRole('ROLE_PROJECT_MANAGER')">
-                            <button type="button" class="btn btn-primary btn-sm"
-                                    th:onclick="'assignTask(' + ${task.id} + ',' + ${project.id} + ')'">Görev Ata</button>
-                        </div>
-                        <form th:if="${task.status != 'DONE'}"
-                              th:action="@{/projects/{projectId}/tasks/{taskId}/complete(projectId=${project.id},taskId=${task.id})}"
-                              method="post" style="display: inline;">
-                            <button type="submit" class="btn btn-success btn-sm">Görevi Tamamla</button>
-                        </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#activeTasks">Aktif Görevler</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#completedTasks">Tamamlanan Görevler</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <!-- Active Tasks Table -->
+                <div class="tab-pane fade show active" id="activeTasks">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Görev</th>
+                                <th>Açıklama</th>
+                                <th>Durum</th>
+                                <th>Öncelik</th>
+                                <th>Atanan Kişi</th>
+                                <th>Oluşturulma Tarihi</th>
+                                <th>İşlemler</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="task : ${activeTasks}">
+                                <td>
+                                    <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id},taskId=${task.id})}"
+                                       th:text="${task.taskName}"></a>
+                                </td>
+                                <td th:text="${task.taskDescription}"></td>
+                                <td>
+                    <span th:class="${'badge bg-' +
+                        (task.status == 'IN_PROGRESS' ? 'primary' : 'warning')}"
+                          th:text="${task.status}"></span>
+                                </td>
+                                <td>
+                    <span th:class="${'badge bg-' +
+                        (task.priority == 'HIGH' ? 'danger' :
+                        (task.priority == 'MEDIUM' ? 'warning' : 'info'))}"
+                          th:text="${task.priority}"></span>
+                                </td>
+                                <td th:text="${task.assignedTo?.username}"></td>
+                                <td th:text="${#temporals.format(task.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td>
+                                    <div th:if="${project.createdBy.username == #authentication.principal.username}"
+                                         sec:authorize="hasRole('ROLE_PROJECT_MANAGER')">
+                                        <button type="button" class="btn btn-primary btn-sm"
+                                                th:onclick="'assignTask(' + ${task.id} + ',' + ${project.id} + ')'">Görev Ata</button>
+                                    </div>
+                                    <form th:if="${task.status != 'DONE'}"
+                                          th:action="@{/projects/{projectId}/tasks/{taskId}/complete(projectId=${project.id},taskId=${task.id})}"
+                                          method="post" style="display: inline;">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                        <button type="submit" class="btn btn-success btn-sm">Tamamla</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Completed Tasks Table -->
+                <div class="tab-pane fade" id="completedTasks">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Görev</th>
+                                <th>Açıklama</th>
+                                <th>Öncelik</th>
+                                <th>Atanan Kişi</th>
+                                <th>Oluşturulma Tarihi</th>
+                                <th>Tamamlanma Tarihi</th>
+                                <th>Geçen Süre</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="task : ${completedTasks}">
+                                <td>
+                                    <a th:href="@{/projects/{projectId}/tasks/{taskId}(projectId=${project.id},taskId=${task.id})}"
+                                       th:text="${task.taskName}"></a>
+                                </td>
+                                <td th:text="${task.taskDescription}"></td>
+                                <td>
+                    <span th:class="${'badge bg-' +
+                        (task.priority == 'HIGH' ? 'danger' :
+                        (task.priority == 'MEDIUM' ? 'warning' : 'info'))}"
+                          th:text="${task.priority}"></span>
+                                </td>
+                                <td th:text="${task.assignedTo?.username}"></td>
+                                <td th:text="${#temporals.format(task.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td th:text="${#temporals.format(task.completedAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                <!-- Task Duration Column -->
+                                <td>
+                                    <th:block th:if="${task.completedAt != null and task.createdAt != null}">
+                                        <span th:with="duration=${T(java.time.Duration).between(task.createdAt, task.completedAt)}"
+                                              th:text="${#numbers.formatInteger(duration.toDays(),1) + ' gün ' +
+                                                       #numbers.formatInteger(duration.toHoursPart(),1) + ' saat ' +
+                                                       #numbers.formatInteger(duration.toMinutesPart(),1) + ' dakika'}">
+                                        </span>
+                                    </th:block>
+                                    <span th:unless="${task.completedAt != null and task.createdAt != null}">-</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -101,6 +179,18 @@
             </table>
         </div>
     </div>
+
+    <!-- Add Delete Project Button -->
+    <div class="mt-4" sec:authorize="hasRole('ROLE_PROJECT_MANAGER')"
+         th:if="${project.createdBy.username == #authentication.principal.username}">
+        <form th:action="@{/projects/{id}/delete(id=${project.id})}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn btn-danger"
+                    onclick="return confirm('Bu projeyi silmek istediğinizden emin misiniz?')">
+                Projeyi Sil
+            </button>
+        </form>
+    </div>
 </div>
 
 <!-- Task Assignment Modal -->
@@ -126,8 +216,6 @@
     </div>
 </div>
 
-
-</div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script>
