@@ -10,4 +10,10 @@ public interface TaskService {
     List<Task> getTasksByProject(Project project);
 
     Task getTaskById(Long id);
+
+    void assignTask(Long projectId, Long taskId, String username, String username1);
+
+    void createTask(Long id, TaskCreateDTO taskCreateDTO, String username);
+
+    void completeTask(Long projectId, Long taskId, String username);
 }

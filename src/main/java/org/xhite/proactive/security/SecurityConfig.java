@@ -23,9 +23,11 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorization) -> authorization
                         .requestMatchers("/tasks/**").hasAnyAuthority("ROLE_USER", "ROLE_PROJECT_MANAGER")
+                        .requestMatchers("/projects/*/tasks/*/assign").hasRole("PROJECT_MANAGER")
                         .requestMatchers(HttpMethod.GET, "/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated())
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**")) // Only if you have API endpoints
                 .formLogin(form -> form.loginPage("/login")
                         .permitAll()
                         .defaultSuccessUrl("/projects", true))

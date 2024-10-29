@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Projeler</title>
@@ -12,6 +12,10 @@
 
 <div class="container">
     <h1 class="mt-4">Projeler</h1>
+
+    <div sec:authorize="hasRole('ROLE_PROJECT_MANAGER')" class="mb-3">
+        <a href="/projects/create" class="btn btn-success">Yeni Proje Oluştur</a>
+    </div>
 
     <table class="table table-striped">
         <thead>
