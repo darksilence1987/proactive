@@ -1,6 +1,7 @@
 # Proactive: A Powerful Project Management System
+# Proactive: A Project Management System
 
-Proactive is a comprehensive project management system built with Spring Boot, designed to streamline workflow and boost productivity for software development teams. 
+Proactive is a project management system built with Spring Boot, designed to help software development teams streamline their workflow and improve productivity.
 
 **Key Features:**
 
@@ -9,13 +10,10 @@ Proactive is a comprehensive project management system built with Spring Boot, d
 * **Task Management:** Define, assign, and track tasks within projects, with customizable statuses and priorities.
 * **Team Collaboration:** Facilitate team communication and collaboration through task assignments, comments, and real-time notifications via Spring WebSocket.
 * **Time Tracking:** Monitor time spent on individual tasks for accurate project analysis and resource allocation.
-* **Reporting:** Generate detailed reports on project progress, user performance, and task completion, with PDF export functionality using JasperReports.
+* **Reporting:** Generate detailed reports on project progress and user performance, with PDF export functionality using JasperReports.
 * **Intuitive Interface:** User-friendly interface built with Thymeleaf, providing clear navigation and easy access to project information.
 * **Advanced Filtering and Sorting:** Efficiently organize and manage tasks and projects with flexible filtering and sorting options.
 * **Project Calendar:** Visualize project timelines and deadlines with an integrated calendar view.
-* **Personalized Dashboards:** Dedicated dashboards for users, managers, and admins, offering tailored views and functionalities.
-* **Dockerized Deployment:** Easy deployment and scalability with Docker containers.
-* **Kubernetes and GCP Integration:** Leverage Kubernetes for container orchestration and GCP for cloud-based infrastructure.
 
 **Technologies Used:**
 
@@ -27,14 +25,7 @@ Proactive is a comprehensive project management system built with Spring Boot, d
 * PostgreSQL
 * Thymeleaf
 * JasperReports
-* Docker
-* Kubernetes
-* GCP
-
-**Contribute:**
-
-Contributions to Proactive are welcome! Feel free to submit pull requests, report issues, or suggest new features.
 
 **License:**
 
-This project is licensed under the MIT License.  
+This project is licensed under the MIT License.
