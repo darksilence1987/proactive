@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.xhite.proactive.user.AppUser;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
@@ -17,4 +18,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Project findProjectByIdAndStatus(Long id, ProjectStatus status);
 
     List<Project> findAllByStatusIs(ProjectStatus status);
+
+    Project findByProjectName(String projeX);
 }

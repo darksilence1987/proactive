@@ -22,4 +22,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     @Query("SELECT t FROM Task t WHERE t.assignedTo = :user AND t.status = 'DONE' ORDER BY t.createdAt DESC")
     List<Task> findCompletedTasksByUser(AppUser user);
+
+    long countByAssignedTo(AppUser user);
+    long countByAssignedToAndStatus(AppUser user, TaskStatus status);
 }

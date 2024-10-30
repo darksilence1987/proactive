@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			  xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+			  name="Project Summary Report" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30">
+
+	<parameter name="projectName" class="java.lang.String"/>
+	<parameter name="projectManager" class="java.lang.String"/>
+	<parameter name="totalTasks" class="java.lang.Integer"/>
+	<parameter name="completedTasks" class="java.lang.Long"/>
+	<parameter name="inProgressTasks" class="java.lang.Long"/>
+	<parameter name="todoTasks" class="java.lang.Long"/>
+
+	<title>
+		<band height="100">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Project Summary Report"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="50" width="555" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Project: " + $P{projectName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+
+	<detail>
+		<band height="250">
+			<staticText>
+				<reportElement x="50" y="10" width="200" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Project Manager:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="250" y="10" width="200" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{projectManager}]]></textFieldExpression>
+			</textField>
+
+			<staticText>
+				<reportElement x="50" y="40" width="455" height="30"/>
+				<textElement>
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Task Summary]]></text>
+			</staticText>
+
+			<staticText>
+				<reportElement x="50" y="80" width="150" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Total Tasks:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="200" y="80" width="100" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalTasks}]]></textFieldExpression>
+			</textField>
+
+			<staticText>
+				<reportElement x="50" y="110" width="150" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Completed Tasks:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="200" y="110" width="100" height="20" forecolor="#008000"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{completedTasks}]]></textFieldExpression>
+			</textField>
+
+			<staticText>
+				<reportElement x="50" y="140" width="150" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[In Progress Tasks:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="200" y="140" width="100" height="20" forecolor="#FFA500"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{inProgressTasks}]]></textFieldExpression>
+			</textField>
+
+			<staticText>
+				<reportElement x="50" y="170" width="150" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Todo Tasks:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="200" y="170" width="100" height="20" forecolor="#FF0000"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{todoTasks}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

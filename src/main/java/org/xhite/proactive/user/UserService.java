@@ -1,5 +1,6 @@
 package org.xhite.proactive.user;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,4 +15,6 @@ public interface UserService {
     List<AppUser> getUsersByStatus(UserStatus userStatus);
 
     void changeUserStatus(long id, UserStatus userStatus);
+
+    List<AppUser> searchUsers(String query);
 }

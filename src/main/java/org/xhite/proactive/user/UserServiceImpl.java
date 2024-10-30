@@ -51,4 +51,9 @@ public class UserServiceImpl implements UserService{
         user.setStatus(userStatus);
         userRepository.save(user);
     }
+
+    @Override
+    public List<AppUser> searchUsers(String query) {
+        return userRepository.findByUsernameContainingIgnoreCase(query);
+    }
 }

@@ -1,7 +1,10 @@
 package org.xhite.proactive.config;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.xhite.proactive.project.Project;
@@ -10,15 +13,23 @@ import org.xhite.proactive.project.task.Task;
 import org.xhite.proactive.project.task.TaskPriority;
 import org.xhite.proactive.project.task.TaskRepository;
 import org.xhite.proactive.project.task.TaskStatus;
+import org.xhite.proactive.report.JasperReportManager;
+import org.xhite.proactive.report.Report;
+import org.xhite.proactive.report.ReportRepository;
+import org.xhite.proactive.report.ReportType;
 import org.xhite.proactive.user.AppUser;
 import org.xhite.proactive.user.UserRepository;
+import org.xhite.proactive.user.UserService;
 import org.xhite.proactive.user.UserStatus;
 import org.xhite.proactive.user.role.Role;
 import org.xhite.proactive.user.role.RoleName;
 import org.xhite.proactive.user.role.RoleRepository;
 
+import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
@@ -28,10 +39,12 @@ public class DataInitializer {
     private final PasswordEncoder passwordEncoder;
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
+    private final ReportRepository reportRepository;
+    private final EntityManager entityManager;
 
 
     @PostConstruct
-    public void initialize(){
+    public void initialize() throws JRException, FileNotFoundException {
         initializeRoles();
         initalizeTestUser();
         initializeAppUser();
@@ -39,6 +52,7 @@ public class DataInitializer {
         initializeAdmin();
         initializeProjectsAndTasks();
     }
+
 
 
     private void initializeRoles(){

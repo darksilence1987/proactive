@@ -39,7 +39,9 @@
     </thead>
     <tbody>
     <tr th:each="user : ${users}">
-      <td th:text="${user.username}"></td>
+      <td>
+        <a th:href="@{/profile/{username}(username=${user.username})}" th:text="${user.username}"></a>
+      </td>
       <td>
         <span th:each="role, iterStat : ${user.roles}"
               th:text="${role.description} + (${iterStat.last} ? '' : ', ')"></span>
@@ -78,7 +80,9 @@
         </thead>
         <tbody>
         <tr th:each="user : ${pendingUsers}">
-          <td th:text="${user.username}"></td>
+          <td>
+            <a th:href="@{/profile/{username}(username=${user.username})}" th:text="${user.username}"></a>
+          </td>
           <td>
             <span th:each="role, iterStat : ${user.roles}"
                   th:text="${role.description} + (${iterStat.last} ? '' : ', ')"></span>
